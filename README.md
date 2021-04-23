@@ -1,0 +1,3 @@
+# RegressionHeidelbergCement
+
+CASE STUDY: related to a model for prediction of the material strength

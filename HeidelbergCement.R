@@ -234,7 +234,7 @@ mean_absolute_error <- function(x,y)
 paste0("'Mean absolute error: ", round(mean_absolute_error(y_true, y_pred),4)) # all 0.1211
 
 # -------------------------------------------------------------------------------------------------
-# Model3 - Random Forest Regression X-------------------------------------------------------------
+# Model3 - Random Forest Regression X--------------------------------------------------------------
 
 dput(colnames(data)) # splitting data into train and test set
 df <- data[c("X_1", "X_2", "X_3", "X_4", "X_5", "X_6", "X_7", "X_8", "X_9", 

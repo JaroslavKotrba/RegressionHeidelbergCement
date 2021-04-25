@@ -241,7 +241,7 @@ print('Intercept: ', round(model2.intercept_,4))
 print('Mean absolute error: ',round(mean_absolute_error(y_test, y_pred),4))
 
 # -------------------------------------------------------------------------------------------------
-# Model3 - Random Forest Regression X-------------------------------------------------------------
+# Model3 - Random Forest Regression X--------------------------------------------------------------
 
 data.columns # splitting data into train and test set
 df = data[['X_1', 'X_2', 'X_3', 'X_4', 'X_5', 'X_6', 'X_7', 'X_8', 'X_9', 'X_10',

@@ -1,4 +1,4 @@
-# RegressionHeidelbergCement
+# RegressionHeidelbergCement Python vs. R
 
 CASE STUDY: models for prediction of material strength
 

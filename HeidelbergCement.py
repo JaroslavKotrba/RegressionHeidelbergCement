@@ -12,7 +12,7 @@ import os
 path = "C:/Users/HP/OneDrive/Documents/Python Anaconda/Heidelberg Cement"
 os.chdir(path)
 
-data = pd.read_excel('interview_dataset.xlsx', sheet_name='Sheet1')
+data = pd.read_excel('data.xlsx', sheet_name='Sheet1')
 data.head()
 
 # Exploratory analysis

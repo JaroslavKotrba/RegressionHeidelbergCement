@@ -7,7 +7,7 @@ setwd("C:/Users/HP/OneDrive/Documents/R/Heidelberg Cement")
 dir()
 
 library(readxl)
-data <- read_excel("interview_dataset.xlsx", sheet = 1)
+data <- read_excel("data.xlsx", sheet = 1)
 
 # Exploratory analysis
 

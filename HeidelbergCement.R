@@ -207,7 +207,7 @@ paste0("'Mean absolute error: ", round(mean_absolute_error(y_true, y_pred),4)) #
 # Model2 - Multiple Linear Regression y------------------------------------------------------------
 
 dput(colnames(data)) # splitting data into train and test set
-df <- data[c("y", "y_0", "y_1", "y_2", "y_3", "y_4", "y_5", "y")]
+df <- data[c("y_0", "y_1", "y_2", "y_3", "y_4", "y_5", "y")]
 
 library(caTools)
 set.seed(123)

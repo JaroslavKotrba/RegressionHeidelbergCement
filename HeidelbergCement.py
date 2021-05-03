@@ -367,3 +367,5 @@ predictions = model.predict(X_test)
 print('Mean squared error: ',round(np.sqrt(mean_squared_error(y_test, predictions)),2))
 print('Mean absolute error: ',round(mean_absolute_error(y_test, predictions),2))
 print('Explained variance: ',round(explained_variance_score(y_test, predictions),2))
+
+

@@ -12,7 +12,7 @@ import os
 path = "C:/Users/HP/OneDrive/Documents/Python Anaconda/Heidelberg Cement"
 os.chdir(path)
 
-data = pd.read_excel('data.xlsx', sheet_name='Sheet1')
+data = pd.read_excel('interview_dataset.xlsx', sheet_name='Sheet1')
 data.head()
 
 # Exploratory analysis
@@ -60,7 +60,7 @@ plt.show()
 # Feature engineering
 
 # -------------------------------------------------------------------------------------------------
-# Feature engineering preprocessing----------------------------------------------------------------
+# Feature engineering preprocessing ---------------------------------------------------------------
 
 data['X_26'].value_counts() # X_26 separate time and date
 data['time'] = pd.to_datetime(data['X_26'], format='%Y:%M:%D').dt.time
@@ -173,7 +173,7 @@ data
 # Models
 
 # -------------------------------------------------------------------------------------------------
-# Model1 - Multiple Linear Regression X------------------------------------------------------------
+# Model1 - Multiple Linear Regression X -----------------------------------------------------------
 
 data.columns # splitting data into train and test set
 df = data[['X_1', 'X_2', 'X_3', 'X_4', 'X_5', 'X_6', 'X_7', 'X_8', 'X_9', 'X_10',
@@ -208,29 +208,33 @@ print('Intercept: ', round(model1.intercept_,4))
 print('Mean absolute error: ',round(mean_absolute_error(y_test, y_pred),4))
 
 # -------------------------------------------------------------------------------------------------
-# Model2 - Multiple Linear Regression y------------------------------------------------------------
+# Model2 - Multiple Linear Regression y error -----------------------------------------------------
 
 data.columns # splitting data into train and test set
 df = data[['y_0', 'y_1', 'y_2', 'y_3', 'y_4', 'y_5', 'y']]
 
+df['e_0'] = df['y_0'] - df['y']
+df['e_1'] = df['y_1'] - df['y']
+df['e_2'] = df['y_2'] - df['y']
+df['e_3'] = df['y_3'] - df['y']
+df['e_4'] = df['y_4'] - df['y']
+df['e_5'] = df['y_5'] - df['y']
+
+df['e'] = df[['e_0', 'e_1', 'e_2', 'e_3', 'e_4', 'e_5']].mean(axis=1)
+df
 from sklearn.model_selection import train_test_split
 X = df[['y_0', 'y_1', 'y_2', 'y_3', 'y_4', 'y_5']]
-y = df['y']
+y = df['e']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1001)
 
 from sklearn.linear_model import LinearRegression
-model2 = LinearRegression()
+model2 = LinearRegression() # multiple linear regression model
 model2.fit(X_train, y_train)
 coefficient = pd.DataFrame(model2.coef_,X.columns)
 coefficient.columns = ['Coefficient']
 coefficient = pd.DataFrame(coefficient)
 
 y_pred = model2.predict(X_test)
-
-outcome = pd.DataFrame({'y_test':y_test, 'y_pred':y_pred})
-outcome['difference'] = outcome['y_test'] - outcome['y_pred']
-outcome['difference_percentage'] = round(outcome.difference/(outcome.y_test/100),6)
-print('Percentage difference: ', round(outcome.difference_percentage.abs().mean(),2),'%')
 
 coef = round(coefficient['Coefficient'][0],4)
 inter = round(model2.intercept_,4)
@@ -241,7 +245,7 @@ print('Intercept: ', round(model2.intercept_,4))
 print('Mean absolute error: ',round(mean_absolute_error(y_test, y_pred),4))
 
 # -------------------------------------------------------------------------------------------------
-# Model3 - Random Forest Regression X--------------------------------------------------------------
+# Model3 - Random Forest Regression X -------------------------------------------------------------
 
 data.columns # splitting data into train and test set
 df = data[['X_1', 'X_2', 'X_3', 'X_4', 'X_5', 'X_6', 'X_7', 'X_8', 'X_9', 'X_10',
@@ -268,15 +272,11 @@ print('Mean absolute error: ',round(mean_absolute_error(y_test, y_pred),4))
 
 # Conclusion
 
-### The random forest model performed the best out of the models that I tried: decision tree regression, multiple linear regression, SVM and ANN. The random forest does not take into consideration outliers and in comparison to the y model where is high linear dependency, performs very well.
+### The random forest model performed the best out of the models that I tried: decision tree regression, multiple linear regression, SVM and ANN. The random forest does not take into consideration outliers and even in comparison to the linear regression model where is high linear dependency, performs very well.
 
-### The Linear regression model of y shows really low mean absolute error because we try to estimate the mean out of the six measurements.
+### The Linear regression model of y error shows a really low mean absolute error because we try to estimate the error out of the six measurements. One can see high linear dependency, which resulted in a choice of multiple linear regression model.
 
-
-
-
-
-# ADDITIONAL NOTES------------------------------------------------
+# ADDITIONAL NOTES --------------------------------------------------------------------------------
 
 # Decision Tree
 

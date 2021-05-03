@@ -1,24 +1,24 @@
 # HeidelbergCement Material Strength
 
 # -------------------------------------------------------------------------------------------------
-# Import-------------------------------------------------------------------------------------------
+# Import ------------------------------------------------------------------------------------------
 
 setwd("C:/Users/HP/OneDrive/Documents/R/Heidelberg Cement")
 dir()
 
 library(readxl)
-data <- read_excel("data.xlsx", sheet = 1)
+data <- read_excel("interview_dataset.xlsx", sheet = 1)
 
 # Exploratory analysis
 
 # -------------------------------------------------------------------------------------------------
-# Summary------------------------------------------------------------------------------------------
+# Summary -----------------------------------------------------------------------------------------
 
 summary(data)
 str(data)
 
 # -------------------------------------------------------------------------------------------------
-# NAs----------------------------------------------------------------------------------------------
+# NAs ---------------------------------------------------------------------------------------------
 
 library(Amelia) #missing data
 missmap(data, main = 'Missing Map', col = c('red', 'green'), rank.order = F)
@@ -27,15 +27,16 @@ missmap(data, main = 'Missing Map', col = c('red', 'green'), rank.order = F)
 # vis_miss(data)
 
 # -------------------------------------------------------------------------------------------------
-# Correlation--------------------------------------------------------------------------------------
+# Correlation -------------------------------------------------------------------------------------
 
+library(tidyr)
 library(corrplot)
 nums <- drop_na(as.data.frame(dplyr::select_if(data, is.numeric)))
 corr <- as.data.frame(cor(nums,use="pairwise.complete.obs"))
 corrplot::corrplot(cor(nums))
 
 # -------------------------------------------------------------------------------------------------
-# Distribution-------------------------------------------------------------------------------------
+# Distribution ------------------------------------------------------------------------------------
 
 library(purrr) # selecting a particular variable
 library(tidyr)
@@ -62,12 +63,12 @@ data %>%
   gather() %>% 
   ggplot(aes(value)) +
   facet_wrap(~ key, scales = "free") +
-  geom_histogram()
+  geom_histogram(bins=30)
 
 # Feature engineering
 
 # -------------------------------------------------------------------------------------------------
-# Feature engineering preprocessing----------------------------------------------------------------
+# Feature engineering preprocessing ---------------------------------------------------------------
 
 library(tidyverse)
 unique(data$X_26) # X_26 separate time and date
@@ -162,6 +163,7 @@ data$X_0 <- NULL
 unique(data$X_17) # X_17 mean imputation
 mean <- mean(data$X_17, na.rm = T)
 mean
+
 data$X_17 <- round(ifelse(is.na(data$X_17), mean, data$X_17),1)
 
 # REST of NAs and outliers deleted
@@ -172,7 +174,7 @@ data
 # Models
 
 # -------------------------------------------------------------------------------------------------
-# Model1 - Multiple Linear Regression X------------------------------------------------------------
+# Model1 - Multiple Linear Regression X -----------------------------------------------------------
 
 dput(colnames(data)) # splitting data into train and test set
 df <- data[c("X_1", "X_2", "X_3", "X_4", "X_5", "X_6", "X_7", "X_8", "X_9", 
@@ -204,10 +206,21 @@ mean_absolute_error <- function(x,y)
 paste0("'Mean absolute error: ", round(mean_absolute_error(y_true, y_pred),4)) # all 1.4511
 
 # -------------------------------------------------------------------------------------------------
-# Model2 - Multiple Linear Regression y------------------------------------------------------------
+# Model2 - Multiple Linear Regression y Error -----------------------------------------------------
 
 dput(colnames(data)) # splitting data into train and test set
 df <- data[c("y_0", "y_1", "y_2", "y_3", "y_4", "y_5", "y")]
+
+df$e_0 <- df$y_0 - df$y
+df$e_1 <- df$y_1 - df$y
+df$e_2 <- df$y_2 - df$y
+df$e_3 <- df$y_3 - df$y
+df$e_4 <- df$y_4 - df$y
+df$e_5 <- df$y_5 - df$y
+str(df)
+
+df$y <- rowMeans(df[,8:13])
+df <- df[, -c(8:13)]
 
 library(caTools)
 set.seed(123)
@@ -224,17 +237,13 @@ y_true <- test$y
 outcome <- cbind(test, y_pred)
 outcome$difference <- outcome$y - outcome$y_pred
 
-# Percentage
-outcome$difference.percentage <- round(outcome$difference/(outcome$y/100),6)
-paste0("Percentage difference: ", round(mean(abs(outcome$difference.percentage)),2), "%") # 0.22%
-
 # MAE
 mean_absolute_error <- function(x,y)
 {mean(abs(x-y))}
-paste0("'Mean absolute error: ", round(mean_absolute_error(y_true, y_pred),4)) # all 0.1211
+paste0("'Mean absolute error: ", round(mean_absolute_error(y_true, y_pred),4)) # all 0.1274
 
 # -------------------------------------------------------------------------------------------------
-# Model3 - Random Forest Regression X--------------------------------------------------------------
+# Model3 - Random Forest Regression X -------------------------------------------------------------
 
 dput(colnames(data)) # splitting data into train and test set
 df <- data[c("X_1", "X_2", "X_3", "X_4", "X_5", "X_6", "X_7", "X_8", "X_9", 
@@ -269,6 +278,6 @@ paste0("'Mean absolute error: ", round(mean_absolute_error(y_true, y_pred),4)) #
 
 # Conclusion
 
-### The random forest model performed the best out of the models that I tried: decision tree regression, multiple linear regression, SVM and ANN. The random forest does not take into consideration outliers and in comparison to the y model where is high linear dependency, performs very well.
+### The random forest model performed the best out of the models that I tried: decision tree regression, multiple linear regression, SVM and ANN. The random forest does not take into consideration outliers and even in comparison to the linear regression model where is high linear dependency, performs very well.
 
-### The Linear regression model of y shows really low mean absolute error because we try to estimate the mean out of the six measurements.
+### The Linear regression model of y error shows a really low mean absolute error because we try to estimate the error out of the six measurements. One can see high linear dependency, which resulted in a choice of multiple linear regression model.

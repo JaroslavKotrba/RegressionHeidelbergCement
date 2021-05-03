@@ -281,3 +281,6 @@ paste0("'Mean absolute error: ", round(mean_absolute_error(y_true, y_pred),4)) #
 ### The random forest model performed the best out of the models that I tried: decision tree regression, multiple linear regression, SVM and ANN. The random forest does not take into consideration outliers and even in comparison to the linear regression model where is high linear dependency, performs very well.
 
 ### The Linear regression model of y error shows a really low mean absolute error because we try to estimate the error out of the six measurements. One can see high linear dependency, which resulted in a choice of multiple linear regression model.
+
+               
+               
